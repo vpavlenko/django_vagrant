@@ -4,6 +4,7 @@ sudo apt-get update -y
 sudo apt-get install python-dev python3 python-virtualenv -y
 
 cd /vagrant/
+virtualenv -p python3 venv
 source venv/bin/activate
 
 pip install -r requirements.txt
