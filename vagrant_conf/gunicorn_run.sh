@@ -7,17 +7,20 @@ SOCKET=127.0.0.1:9000
 USER=root                                        # the user to run as
 GROUP=root                                     # the group to run as
 NUM_WORKERS=3                                     # how many worker processes should Gunicorn spawn
-DJANGO_SETTINGS_MODULE=django_vagrant.settings             # which settings file should Django use
-DJANGO_WSGI_MODULE=django_vagrant.wsgi                     # WSGI module name
+DJANGO_SETTINGS_MODULE=$NAME.settings             # which settings file should Django use
+DJANGO_WSGI_MODULE=$NAME.wsgi                     # WSGI module name
  
 echo "Starting $NAME as `whoami`"
  
 # Activate the virtual environment
 cd $DJANGODIR
-source venv/bin/activate
+source $DJANGODIR/venv/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
  
+cat vagrant_conf/db_admin_credentials.txt | python3 manage.py syncdb
+python3 manage.py collectstatic --noinput
+
 # Create the run directory if it doesn't exist
 # RUNDIR=$(dirname $SOCKFILE)
 # test -d $RUNDIR || mkdir -p $RUNDIR
