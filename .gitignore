@@ -56,4 +56,8 @@ docs/_build/
 logs
 
 # Virtualenv
+venv# Database
+db.sqlite3
+
+# Virtual environment
 venv
