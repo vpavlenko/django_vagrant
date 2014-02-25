@@ -53,6 +53,7 @@ docs/_build/
 
 # Vagrant
 .vagrant
+logs
 
 # Virtualenv
 venv
