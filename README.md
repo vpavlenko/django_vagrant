@@ -1,14 +1,17 @@
-Scaffold for Django application
--------------------------------
+Scaffold for Django application: the goal
+-----------------------------------------
+
+Why deploying Django is that hard for every novice? Can we fix that?
 
 The major goal of this repo is to scaffold and automate three things:
-- Ubuntu 12.04 development server installation and running (through virtualenv, Vagrant and `manage.py runserver`)
-- project building (static assets, production bundle compilation)
-- project launch on the production Vagrant instance with nginx-supervisor-gunicorn deployment scheme
+- installation and running of Ubuntu 12.04 development server, agnostic of your host system
+    (here I use virtualenv, Vagrant and `manage.py runserver` against sqlite3 database)
+- project packaging (production package packaging, maybe one day I'll add static assets compilation)
+- launch of the stage-test-prod instance with nginx-supervisor-gunicorn-mysql deployment scheme
 
-We use here a nice way to deploy Django in production:
+I use here a known-to-be-nice way to deploy Django in production:
 - `nginx` as a front server which directly handles static files
-- `gunicorn` as WSGI server which itself is controlled by `supervisor`
+- `gunicorn` as WSGI server for dynamic content which itself is controlled by `supervisor`
 - dependencies are described in `requirements.txt` and about to be installed into `virtualenv`
 
 The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
@@ -20,25 +23,31 @@ How to use
 Install VirtualBox and Vagrant on your host.
 Then setup and launch the virtual dev/prod server with either of three commands
 
-    vagrant up dev
-    vagrant up prod
-    vagrant up dev+prod
+    vagrant up dev  # if you are a developer
+    vagrant up prod  # if you are a deployer
+    vagrant up dev+prod  # if you are just like me
 
-That begs Vagrant to download Ubuntu 12.04 and to install all necessary Debian packages and Python libraries
-into it. This activity can last about 15 minutes for the first time.
+These commands beg Vagrant to download Ubuntu 12.04 and to install all necessary Debian packages and Python libraries
+into it. The installation can last about 15 minutes for the first time.
 
 Dev/prod
 --------
 
-A dev server is one that serves files from your root repository directory which is mapped in virtual
-server to `/vagrant/`.  The server is run by `python3 manage.py runserver` in `DEBUG == True` mode.
-It is restarted after every fail by supervisor.
+A dev server is one that serves Django files from your root repository directory which is mapped
+to `/vagrant/` on a local virtual machine. The server is run by `python3 manage.py runserver`
+in `DEBUG == True` mode and against the sqlite3 database. It is restarted after every fail by supervisor.
+Dev database admin credentials are set to:
 
-You can access the home page in your host machine's browser on http://127.0.0.1:8042/
+    login: admin
+    password: 42
+
+You can access the home page of the dev instance via your host machine's browser on http://127.0.0.1:8042/
 
 A prod server is one that serves files from an unpacked package within `/home/vagrant/` directory.
-The front server is nginx which serves static assets and redirects dynamic calls to gunicorn. 
-Gunicorn is restarted by `supervisor`. After `vagrant up prod` you can rebuild the prod Django instance:
+The front server is nginx which serves static assets and redirects dynamic requests to gunicorn. 
+Gunicorn is restarted by `supervisor`. The prod database is MySQL
+
+After you setup the virtual machine with `vagrant up prod`, you can relaunch the prod Django instance:
 
     vagrant ssh
     /vagrant/django_vagrant_core_scripts/launch_prod_debug_true.sh
@@ -48,39 +57,48 @@ or
     vagrant ssh
     /vagrant/django_vagrant_core_scripts/launch_prod_debug_false.sh
 
+Relaunch is done via packing and unpacking project files. Every package is saved to `builds/`.
+
 You can access the home page of the prod instance in your host machine's browser on http://127.0.0.1:8066/
 
 The two instances - dev and prod - don't interfere with each other: they use different directories and different
-database. So they can be both launched on a single virtual machine.
+databases. So they can be both launched on a single virtual machine. 
+
+Both dev/prod instances are launched with uid == gid == vagrant. 
 
 Notes
 -----
 
-1. I know that launching prod server via Vagrant is a strange idea and I myself don't do that. Here by "prod server"
-    I rather mean "stage server". But I suggest you to setup your prod server by copying the setup of stage server.
+1. I know that controlling prod server via Vagrant is a strange idea and I myself don't do that. Throughout this
+    scaffold by "prod server" I rather mean "stage server" ("test server"). But I suggest you to setup your
+    prod server by copying the setup of stage server. My main goal was to give you a working example
+    of a stable Django deployment.
 
-2. I assume the following workflow for launching new version on prod:
+2. I assume the following workflow for deploying new version to your production server:
 
     vagrant up dev  # or dev+prod
     vagrant ssh
-    /vagrant/django_vagrant_core_scripts/build_prod.sh
+
+    # on the virtual machine
+    /vagrant/django_vagrant_core_scripts/build_prod.sh  # builds the package with venv/, collected_static/ and code/
     exit
 
     # then on the host machine
-    scp builds/django_vagrant_VERSION.tar.gz vagrant@deploymentserver.com:/home/vagrant/
+    scp packages/django_vagrant_VERSION.tar.gz vagrant@deploymentserver.com:/home/vagrant/
     ssh vagrant@deploymentserver.com
     tar xvf django_vagrant_VERSION.tar.gz
     sudo ./launch_prod.sh
 
-3. When I configured this repo I just had no time to learn the great and wise debian packaging system, sorry.
+3. When I configured this repo I just had no time to learn the great and wise debian packaging system. Maybe I'll do
+    it later.
 
+4. The virtual machine is set up to use 2 Gb of your memory.  If that sucks for you then please excuse me
+and edit [Vagrantfile](Vagrantfile), line
 
-Details of the workflow
------------------------
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
 
-Vagrant maps your project's directory to Ubuntu server's `/vagrant/` directory. You can `vargant ssh` to
-the Vagrant server.
+Vagrant hints
+-------------
 
-You can call `vagrant suspend` or `vagrant halt`. Then again type `vagrant up` to resume the machine.
-
-Two types of server can be run on a single Ubuntu server: dev server and staging server.
+You can call `vagrant suspend` or `vagrant halt` when you do want to pause or stop the running virtual machine.
+After doing that you just type `vagrant up` to resume the machine.
