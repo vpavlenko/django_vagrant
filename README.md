@@ -76,26 +76,26 @@ Notes
 
 2. I assume the following workflow for deploying new version to your production server:
 
-    vagrant up dev  # or dev+prod
-    vagrant ssh
+        vagrant up dev  # or dev+prod
+        vagrant ssh
+    
+        # on the virtual machine
+        /vagrant/django_vagrant_core_scripts/build_prod.sh  # builds the package with venv/, collected_static/ and code/
+        exit
+    
+        # then on the host machine
+        scp packages/django_vagrant_VERSION.tar.gz vagrant@deploymentserver.com:/home/vagrant/
+        ssh vagrant@deploymentserver.com
+        tar xvf django_vagrant_VERSION.tar.gz
+        sudo ./launch_prod.sh
 
-    # on the virtual machine
-    /vagrant/django_vagrant_core_scripts/build_prod.sh  # builds the package with venv/, collected_static/ and code/
-    exit
-
-    # then on the host machine
-    scp packages/django_vagrant_VERSION.tar.gz vagrant@deploymentserver.com:/home/vagrant/
-    ssh vagrant@deploymentserver.com
-    tar xvf django_vagrant_VERSION.tar.gz
-    sudo ./launch_prod.sh
-
-3. When I configured this repo I just had no time to learn the great and wise debian packaging system. Maybe I'll do
+3. When I configured this repo I just had no time to learn the great and wise Debian package system. Maybe I'll do
     it later.
 
 4. The virtual machine is set up to use 2 Gb of your memory.  If that sucks for you then please excuse me
 and edit [Vagrantfile](Vagrantfile), line
 
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
+        vb.customize ["modifyvm", :id, "--memory", "2048"]
 
 Vagrant hints
 -------------
