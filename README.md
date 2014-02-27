@@ -14,14 +14,12 @@ I use here a known-to-be-nice way to deploy Django in production:
 - `gunicorn` as WSGI server for dynamic content which itself is controlled by `supervisor`
 - dependencies are described in `requirements.txt` and about to be installed into `virtualenv`
 
-The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
-directory content.
 
 How to use
 ----------
 
 Install VirtualBox and Vagrant on your host.
-Then setup and launch the virtual dev/prod server with either of three commands
+Then clone this repo, setup and launch the virtual dev/prod server with either of three commands
 
     vagrant up dev  # if you are a developer
     vagrant up prod  # if you are a deployer
@@ -29,6 +27,9 @@ Then setup and launch the virtual dev/prod server with either of three commands
 
 These commands beg Vagrant to download Ubuntu 12.04 and to install all necessary Debian packages and Python libraries
 into it. The installation can last about 15 minutes for the first time.
+
+The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
+directory content. Simply move these files to your existing Django project.
 
 Dev/prod
 --------
