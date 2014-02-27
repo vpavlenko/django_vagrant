@@ -19,13 +19,11 @@ How to use
 ----------
 
 Install VirtualBox and Vagrant on your host.
-Then clone this repo, setup and launch the virtual dev/prod server with either of three commands
+Then clone this repo, setup and launch the virtual dev/prod server with
 
-    vagrant up dev  # if you are a developer
-    vagrant up prod  # if you are a deployer
-    vagrant up dev+prod  # if you are just like me
+    vagrant up
 
-These commands beg Vagrant to download Ubuntu 12.04 and to install all necessary Debian packages and Python libraries
+This command begs Vagrant to download Ubuntu 12.04 and to install all necessary Debian packages and Python libraries
 into it. The installation can last about 15 minutes for the first time.
 
 The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
@@ -46,9 +44,9 @@ You can access the home page of the dev instance via your host machine's browser
 
 A prod server is one that serves files from an unpacked package within `/home/vagrant/` directory.
 The front server is nginx which serves static assets and redirects dynamic requests to gunicorn. 
-Gunicorn is restarted by `supervisor`. The prod database is MySQL
+Gunicorn is restarted by `supervisor`. The prod database is MySQL.
 
-After you setup the virtual machine with `vagrant up prod`, you can relaunch the prod Django instance:
+After you setup the virtual machine with `vagrant up`, you can relaunch the prod Django instance:
 
     vagrant ssh
     /vagrant/django_vagrant_core_scripts/launch_prod_debug_true.sh
@@ -77,7 +75,7 @@ Notes
 
 2. I assume the following workflow for deploying new version to your production server:
 
-        vagrant up dev  # or dev+prod
+        vagrant up
         vagrant ssh
     
         # on the virtual machine
@@ -93,10 +91,6 @@ Notes
 3. When I configured this repo I just had no time to learn the great and wise Debian package system. Maybe I'll do
     it later.
 
-4. The virtual machine is set up to use 2 Gb of your memory.  If that sucks for you then please excuse me
-and edit [Vagrantfile](Vagrantfile), line
-
-        vb.customize ["modifyvm", :id, "--memory", "2048"]
 
 Vagrant hints
 -------------
