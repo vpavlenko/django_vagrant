@@ -56,7 +56,7 @@ or
     vagrant ssh
     /vagrant/django_vagrant_core_scripts/launch_prod_debug_false.sh
 
-Relaunch is done via packing and unpacking project files. Every package is saved to `builds/`.
+Relaunch is done via packing and unpacking project files. Every package is saved to `packages/`.
 
 You can access the home page of the prod instance in your host machine's browser on http://127.0.0.1:8066/
 

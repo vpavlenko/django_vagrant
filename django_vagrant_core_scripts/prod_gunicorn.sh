@@ -19,8 +19,8 @@ cd $PROJECT_ROOT_DIR
 source $PROJECT_ROOT_DIR/venv/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$PROJECT_ROOT_DIR:$PYTHONPATH
- 
-cat vagrant_conf/db_admin_credentials.txt | python3 manage.py syncdb
+
+cat django_vagrant_core_scripts/db_admin_credentials.txt | python3 manage.py syncdb
 python3 manage.py collectstatic --noinput
 
 gunicorn ${DJANGO_WSGI_MODULE}:application \

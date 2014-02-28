@@ -67,8 +67,8 @@ venv
 # Dev database
 db.sqlite3
 
-# Prod builds
-builds
+# Prod packages
+packages
 
 # Collected static files
 collected_static
