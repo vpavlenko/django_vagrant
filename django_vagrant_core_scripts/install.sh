@@ -2,7 +2,7 @@
 
 set -x
 
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR=/vagrant/django_vagrant_core_scripts
 export VAGRANT_CONF_DIR=$SCRIPT_DIR
 
 sudo apt-get update -y

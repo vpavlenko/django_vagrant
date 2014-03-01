@@ -15,3 +15,6 @@ cd $PROD_DIR
 cp $PACKAGES_DIR/django_vagrant_package.tar.gz .
 rm -rf django_vagrant_package
 tar xvf django_vagrant_package.tar.gz
+
+sudo service supervisor stop
+sudo service supervisor start
