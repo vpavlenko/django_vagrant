@@ -7,7 +7,7 @@ The major goal of this repo is to scaffold and automate three things:
 - installation and running of Ubuntu 12.04 development server, agnostic of your host system
     (here I use virtualenv, Vagrant and `manage.py runserver` against sqlite3 database)
 - project packaging (production package packaging, maybe one day I'll add static assets compilation)
-- launch of the stage-test-prod instance with nginx-supervisor-gunicorn-mysql deployment scheme
+- launch of the stage-test-prod instance with nginx-supervisor-gunicorn-mysql deployment scheme (currently mysql is replaced by sqlite3)
 
 I use here a known-to-be-nice way to deploy Django in production:
 - `nginx` as a front server which directly handles static files
@@ -27,7 +27,7 @@ This command begs Vagrant to download Ubuntu 12.04 and to install all necessary 
 into it. The installation can last about 15 minutes for the first time.
 
 The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
-directory content. Simply move these files to your existing Django project.
+directory content. Simply move these files to your existing Django project. I assume you use Python 3.
 
 Dev/prod
 --------
