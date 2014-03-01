@@ -1,0 +1,20 @@
+<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+
+<h3>Test #1: static files</h3>
+<div class="test-css-failed" style="color: darkred;">
+Test failed
+</div>
+<div class="test-css-passed" style="display: none;">
+Test passed
+</div>
+
+<h3>Test #2: database read/write</h3>
+{% if test_db_ok %}
+<div class="test-db-passed" style="color: darkgreen;">
+Test passed
+</div>
+{% else %}
+<div class="test-db-failed" style="color: darkred;">
+Test failed
+</div>
+{% endif %}

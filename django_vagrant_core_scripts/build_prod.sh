@@ -26,7 +26,7 @@ if `git status | grep "nothing to commit"` ; then
 else
     GIT_WITH_CHANGES="_changed_from_commit"
 fi
-PROD_PACKAGE_SUFFIX=$GIT_BRANCH$GIT_COMMIT$GIT_WITH_CHANGES
+PROD_PACKAGE_SUFFIX=$GIT_BRANCH$GIT_COMMIT$GIT_WITH_CHANGES.tar.gz
 popd
 
 # Check if /vagrant/venv/ corresponds to requirements.txt
@@ -82,4 +82,4 @@ popd
 mkdir $PACKAGES_DIR
 mv $PACKAGE_SANDBOX/$PACKAGE_ARCHIVE $PACKAGES_DIR
 
-cp $PACKAGES_DIR/$PACKAGE_ARCHIVE $PROD_PACKAGE_SUFFIX
+cp $PACKAGES_DIR/$PACKAGE_ARCHIVE $PACKAGES_DIR/$PROD_PACKAGE_SUFFIX

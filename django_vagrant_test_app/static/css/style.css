@@ -1,0 +1,8 @@
+.test-css-failed {
+    display: none !important;
+}
+
+.test-css-passed {
+    display: block !important;
+    color: darkgreen;
+}

@@ -2,6 +2,11 @@
 
 set -x
 
+if [ `whoami` != 'root' ] ; then
+    echo "This script should be run as root"
+    exit 1
+fi
+
 SCRIPT_DIR=/vagrant/django_vagrant_core_scripts
 export VAGRANT_CONF_DIR=$SCRIPT_DIR
 
