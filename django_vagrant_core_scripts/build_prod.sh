@@ -46,6 +46,7 @@ mkdir -p $PACKAGE_DIR
 rsync -av /vagrant/source $PACKAGE_DIR
 
 rsync -av /vagrant/collected_static $PACKAGE_DIR
+mv $PACKAGE_DIR/collected_static $PACKAGE_DIR/static
 
 # virtualenv --relocatable /vagrant/venv
 # rsync -av /vagrant/venv $PACKAGE_DIR
