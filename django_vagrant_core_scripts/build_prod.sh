@@ -38,16 +38,12 @@ if ! `diff /vagrant/requirements.txt /tmp/requirements.txt` ; then
     exit 1
 fi
 
-/vagrant/venv/bin/python3 /vagrant/manage.py collectstatic --noinput
+/vagrant/venv/bin/python /vagrant/source/manage.py collectstatic --noinput
 
 rm -rf $PACKAGE_DIR
 mkdir -p $PACKAGE_DIR
 
-rsync -av --exclude venv \
-    --exclude .git --exclude .gitignore \
-    --exclude Vagrantfile --exclude $VAGRANT_CONF_DIR --exclude .vagrant \
-    --exclude django_vagrant_core_scripts --exclude packages \
-    --exclude collected_static /vagrant/* $PACKAGE_DIR/source/
+rsync -av /vagrant/source $PACKAGE_DIR
 
 rsync -av /vagrant/collected_static $PACKAGE_DIR
 
@@ -64,10 +60,11 @@ rsync -av /vagrant/collected_static $PACKAGE_DIR
 # calling 'source venv/bin/activate', and calling local gunicorn is crucial
 # for passing the right virtualenv to it
 
-virtualenv -p python3 $PACKAGE_DIR/venv
-source $PACKAGE_DIR/venv/bin/activate
-which pip
-pip install -q --log /tmp/prod_venv_install.log -r /vagrant/requirements.txt || exit 1
+# virtualenv -p python3 $PACKAGE_DIR/venv
+# source $PACKAGE_DIR/venv/bin/activate
+# which pip
+# pip install -q --log /tmp/prod_venv_install.log -r /vagrant/requirements.txt || exit 1
+sudo -u vagrant -H /bin/bash -c "$VAGRANT_CONF_DIR/configure_virtualenv.sh $PACKAGE_DIR/venv prod"
 if [ ! $? ] ; then
     echo "pip install failed, see /tmp/prod_venv_install.log for the details"
     echo

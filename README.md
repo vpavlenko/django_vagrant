@@ -26,22 +26,10 @@ Then clone this repo, setup and launch the virtual dev/prod server with
 This command begs Vagrant to download Ubuntu 12.04 and to install all necessary Debian packages and Python libraries
 into it. The installation can last about 15 minutes for the first time.
 
-The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
-directory content. Simply move these files to your existing Django project. I assume you use Python 3.
+The configs are [Vagrantfile](Vagrantfile), [python.version](python.version) and
+[django_vagrant_core_scripts](django_vagrant_core_scripts) directory content.
+Simply move these files to your existing Django project.
 
-If you want to launch only prod version of the project, follow these steps:
-1. Create a new folder which will be the `/vagrant/` folder for your prod virtual machine.
-2. Copy [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts) into it.
-3. Make a subdirectory `/vagrant/packages/` and move the package you want to launch in production into it.
-3. Start a machine with
-        
-        vagrant up --no-provision
-
-4. Ssh into your machine and launch prod installation:
-
-        vagrant ssh
-        sudo su
-        /vagrant/django_vagrant_core_scripts/launch_prod_debug_false.sh
 
 Dev/prod
 --------
@@ -79,6 +67,25 @@ databases. So they can be both launched on a single virtual machine.
 
 Both dev/prod instances are launched with uid == gid == vagrant. 
 
+
+How to launch prod-only instance
+--------------------------------
+
+If you want to launch only prod version of the project, follow these steps:
+1. Create a new folder which will be the `/vagrant/` folder for your prod virtual machine.
+2. Copy [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts) into it.
+3. Make a subdirectory `/vagrant/packages/` and move the package you want to launch in production into it.
+3. Start a machine with
+        
+        vagrant up --no-provision
+
+4. Ssh into your machine and launch prod installation:
+
+        vagrant ssh
+        sudo su
+        /vagrant/django_vagrant_core_scripts/launch_prod_debug_false.sh
+
+
 Notes
 -----
 
@@ -110,4 +117,5 @@ Vagrant hints
 -------------
 
 You can call `vagrant suspend` or `vagrant halt` when you do want to pause or stop the running virtual machine.
-After doing that you just type `vagrant up` to resume the machine.
+After doing that you just type `vagrant up` to resume the machine. Dev/prod servers will automatically restart
+after reboot, though it may take about 30 seconds.

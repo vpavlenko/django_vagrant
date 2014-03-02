@@ -11,9 +11,10 @@ SCRIPT_DIR=/vagrant/django_vagrant_core_scripts
 export VAGRANT_CONF_DIR=$SCRIPT_DIR
 
 sudo apt-get update -y
-sudo apt-get install -y git vim python3-dev python3 python-virtualenv \
-    python-setuptools python3-setuptools nginx supervisor
+sudo apt-get install -y git vim python-dev python3-dev python python3 \
+    python-virtualenv python-setuptools python3-setuptools nginx supervisor
 # We need version 1.1 or higher. easy_install3 gives at least 1.5.4
+sudo easy_install pip
 sudo easy_install3 pip
 
 # /vagrant is mount point for the repository root
@@ -27,13 +28,7 @@ popd
 service nginx restart
 
 # Configure virtualenv
-su vagrant <<'EOF'
-if [ ! -e /vagrant/venv ] ; then
-    virtualenv -p python3 /vagrant/venv
-fi
-source /vagrant/venv/bin/activate
-pip install -v --log /tmp/dev_venv_install.log -r /vagrant/requirements.txt
-EOF
+sudo -u vagrant -H /bin/bash -c "$VAGRANT_CONF_DIR/configure_virtualenv.sh /vagrant/venv dev"
 
 # Configure supervisor, runserver and gunicorn
 mkdir -p /home/vagrant/scripts/
@@ -45,4 +40,4 @@ service supervisor stop
 service supervisor start
 
 # su -c $VAGRANT_CONF_DIR/launch_prod_debug_false.sh -s /bin/bash vagrant
-sudo -u vagrant -H /bin/bash -c $VAGRANT_CONF_DIR/build_and_launch_prod_debug_false.sh
+sudo -u vagrant -H /bin/bash -c "$VAGRANT_CONF_DIR/build_and_launch_prod_debug_false.sh"
