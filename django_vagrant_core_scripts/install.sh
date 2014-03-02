@@ -45,4 +45,4 @@ service supervisor stop
 service supervisor start
 
 # su -c $VAGRANT_CONF_DIR/launch_prod_debug_false.sh -s /bin/bash vagrant
-sudo -u vagrant -H /bin/bash -c $VAGRANT_CONF_DIR/launch_prod_debug_false.sh
+sudo -u vagrant -H /bin/bash -c $VAGRANT_CONF_DIR/build_and_launch_prod_debug_false.sh

@@ -5,7 +5,6 @@ set -x
 if [ `whoami` != 'vagrant' ] ; then
     echo "build_prod.sh should be called from vagrant user"
     echo "current user: `whoami`"
-    echo
     exit 1
 fi
 
@@ -44,7 +43,7 @@ fi
 rm -rf $PACKAGE_DIR
 mkdir -p $PACKAGE_DIR
 
-rsync -av --exclude venv --exclude requirements.txt \
+rsync -av --exclude venv \
     --exclude .git --exclude .gitignore \
     --exclude Vagrantfile --exclude $VAGRANT_CONF_DIR --exclude .vagrant \
     --exclude django_vagrant_core_scripts --exclude packages \
@@ -68,7 +67,7 @@ rsync -av /vagrant/collected_static $PACKAGE_DIR
 virtualenv -p python3 $PACKAGE_DIR/venv
 source $PACKAGE_DIR/venv/bin/activate
 which pip
-pip install -q --log /tmp/prod_venv_install.log -r /vagrant/requirements.txt
+pip install -q --log /tmp/prod_venv_install.log -r /vagrant/requirements.txt || exit 1
 if [ ! $? ] ; then
     echo "pip install failed, see /tmp/prod_venv_install.log for the details"
     echo

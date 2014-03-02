@@ -8,4 +8,4 @@ cat /vagrant/django_vagrant_core_scripts/db_admin_credentials.txt | python3 /vag
 # TODO: add migrations here
 python3 /vagrant/manage.py collectstatic --noinput
 
-python3 /vagrant/manage.py runserver 0.0.0.0:8042
+python3 /vagrant/manage.py runserver --noreload 0.0.0.0:8042

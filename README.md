@@ -29,6 +29,20 @@ into it. The installation can last about 15 minutes for the first time.
 The configs are [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts)
 directory content. Simply move these files to your existing Django project. I assume you use Python 3.
 
+If you want to launch only prod version of the project, follow these steps:
+1. Create a new folder which will be the `/vagrant/` folder for your prod virtual machine.
+2. Copy [Vagrantfile](Vagrantfile) and [django_vagrant_core_scripts](django_vagrant_core_scripts) into it.
+3. Make a subdirectory `/vagrant/packages/` and move the package you want to launch in production into it.
+3. Start a machine with
+        
+        vagrant up --no-provision
+
+4. Ssh into your machine and launch prod installation:
+
+        vagrant ssh
+        sudo su
+        /vagrant/django_vagrant_core_scripts/launch_prod_debug_false.sh
+
 Dev/prod
 --------
 
@@ -49,12 +63,12 @@ Gunicorn is restarted by `supervisor`. The prod database is MySQL.
 After you setup the virtual machine with `vagrant up`, you can relaunch the prod Django instance:
 
     vagrant ssh
-    /vagrant/django_vagrant_core_scripts/launch_prod_debug_true.sh
+    /vagrant/django_vagrant_core_scripts/build_and_launch_prod_debug_true.sh
 
 or
 
     vagrant ssh
-    /vagrant/django_vagrant_core_scripts/launch_prod_debug_false.sh
+    /vagrant/django_vagrant_core_scripts/build_and_launch_prod_debug_false.sh
 
 Relaunch is done via packing and unpacking project files. Every package is saved to `packages/`.
 
