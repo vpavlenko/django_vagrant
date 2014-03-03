@@ -9,11 +9,9 @@ if [ `whoami` != 'vagrant' ] ; then
 fi
 
 VAGRANT_CONF_DIR=/vagrant/django_vagrant_core_scripts
-PACKAGE_SANDBOX=/home/vagrant/package_sandbox
-PACKAGE_SUFFIX=django_vagrant_package
-PACKAGE_DIR=$PACKAGE_SANDBOX/$PACKAGE_SUFFIX
-PACKAGE_ARCHIVE=django_vagrant_package.tar.gz
 PACKAGES_DIR=/vagrant/packages
+PACKAGE_SUPERDIR=/home/vagrant/prod
+PROD_SYMLINK=$PACKAGE_SUPERDIR/django_vagrant_package
 
 # Collect information about current branch and commit
 # In the future we will be name our package according to this suffix
@@ -25,7 +23,9 @@ if `git status | grep "nothing to commit"` ; then
 else
     GIT_WITH_CHANGES="_changed_from_commit"
 fi
-PROD_PACKAGE_SUFFIX=$GIT_BRANCH$GIT_COMMIT$GIT_WITH_CHANGES.tar.gz
+PROD_PACKAGE_SUFFIX=$GIT_BRANCH$GIT_COMMIT$GIT_WITH_CHANGES
+PROD_PACKAGE_ARCHIVE=$PACKAGES_DIR/$PROD_PACKAGE_SUFFIX.tar.gz
+PACKAGE_DIR=$PACKAGE_SUPERDIR/$PROD_PACKAGE_SUFFIX
 popd
 
 # Check if /vagrant/venv/ corresponds to requirements.txt
@@ -33,12 +33,11 @@ popd
 /vagrant/venv/bin/pip freeze > /tmp/requirements.txt
 if ! `diff /vagrant/requirements.txt /tmp/requirements.txt` ; then
     echo "/vagrant/requirements.txt differs from /vagrant/venv/bin/pip freeze, I can't get over it"
-    echo ""
     diff /vagrant/requirements.txt /tmp/requirements.txt
     exit 1
 fi
 
-/vagrant/venv/bin/python /vagrant/source/manage.py collectstatic --noinput
+/vagrant/venv/bin/python /vagrant/source/manage.py collectstatic --settings=django_vagrant.settings.dev --noinput
 
 rm -rf $PACKAGE_DIR
 mkdir -p $PACKAGE_DIR
@@ -48,23 +47,11 @@ rsync -av /vagrant/source $PACKAGE_DIR
 rsync -av /vagrant/collected_static $PACKAGE_DIR
 mv $PACKAGE_DIR/collected_static $PACKAGE_DIR/static
 
-# virtualenv --relocatable /vagrant/venv
-# rsync -av /vagrant/venv $PACKAGE_DIR
-#
 # --relocatable doesn't change bin/activate script, so it will be broken
 # in destination venv. therefore the only viable way to have live venv
 # is:
 # 1. recreate it in the target directory
 # 2. never change the path to it
-#
-# it sucks tremendously, but I don't know how to call local gunicorn without
-# calling 'source venv/bin/activate', and calling local gunicorn is crucial
-# for passing the right virtualenv to it
-
-# virtualenv -p python3 $PACKAGE_DIR/venv
-# source $PACKAGE_DIR/venv/bin/activate
-# which pip
-# pip install -q --log /tmp/prod_venv_install.log -r /vagrant/requirements.txt || exit 1
 sudo -u vagrant -H /bin/bash -c "$VAGRANT_CONF_DIR/configure_virtualenv.sh $PACKAGE_DIR/venv prod"
 if [ ! $? ] ; then
     echo "pip install failed, see /tmp/prod_venv_install.log for the details"
@@ -72,11 +59,10 @@ if [ ! $? ] ; then
     exit 1
 fi
 
-pushd $PACKAGE_SANDBOX
-tar czvf $PACKAGE_ARCHIVE $PACKAGE_SUFFIX
-popd
-
+cd /
 mkdir $PACKAGES_DIR
-mv $PACKAGE_SANDBOX/$PACKAGE_ARCHIVE $PACKAGES_DIR
+rm $PROD_PACKAGE_ARCHIVE
+tar czvf $PROD_PACKAGE_ARCHIVE $PACKAGE_DIR
 
-cp $PACKAGES_DIR/$PACKAGE_ARCHIVE $PACKAGES_DIR/$PROD_PACKAGE_SUFFIX
+rm -rf $PROD_SYMLINK
+ln -s $PACKAGE_DIR $PROD_SYMLINK

@@ -32,6 +32,7 @@ sudo -u vagrant -H /bin/bash -c "$VAGRANT_CONF_DIR/configure_virtualenv.sh /vagr
 
 # Configure supervisor, runserver and gunicorn
 mkdir -p /home/vagrant/scripts/
+chown vagrant /home/vagrant/scripts/
 cp $VAGRANT_CONF_DIR/dev_runserver.sh /home/vagrant/scripts/
 cp $VAGRANT_CONF_DIR/prod_gunicorn.sh /home/vagrant/scripts/
 cp $VAGRANT_CONF_DIR/django_vagrant_dev_supervisor.conf /etc/supervisor/conf.d/

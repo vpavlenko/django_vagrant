@@ -28,7 +28,11 @@ into it. The installation can last about 15 minutes for the first time.
 
 The configs are [Vagrantfile](Vagrantfile), [python.version](python.version) and
 [django_vagrant_core_scripts](django_vagrant_core_scripts) directory content.
-Simply move these files to your existing Django project.
+
+In order to use this setup with your existing project, you should understand
+the principles of the Django setup I use:
+1. The source code is stored in the `source/` directory
+2. Settings files are organised in the module `settings/`, [as proposed by Randall Degges](http://www.rdegges.com/the-perfect-django-settings-file/).
 
 
 Dev/prod

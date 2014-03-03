@@ -1,6 +1,8 @@
 #!/bin/bash
+
+set -x
  
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIR="/home/vagrant/scripts"
 
 NAME="django_vagrant"
 PROJECT_ROOT_DIR="/home/vagrant/prod/django_vagrant_package"
@@ -9,7 +11,7 @@ SOCKET=127.0.0.1:9000
 USER=vagrant
 GROUP=vagrant
 NUM_WORKERS=3
-DJANGO_SETTINGS_MODULE=$NAME.settings
+DJANGO_SETTINGS_MODULE=$NAME.settings.prod
 DJANGO_WSGI_MODULE=$NAME.wsgi
  
 echo "Starting $NAME as `whoami`"
@@ -23,10 +25,13 @@ export PYTHONPATH=`pwd`:$PYTHONPATH
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 
 # TODO: replace with connection to MySQL
-cat /vagrant/django_vagrant_core_scripts/db_admin_credentials.txt | python3 manage.py syncdb
+cat /vagrant/django_vagrant_core_scripts/db_admin_credentials.txt | python3 manage.py syncdb --settings=django_vagrant.settings.prod
 
 # # This should be done while we build the package
 # python3 manage.py collectstatic --noinput
+
+# Load env variables for settings file
+source $SCRIPT_DIR/prod_envs.sh
 
 # We should use local gunicorn, it's the only easy way to pass virtualenv to it
 gunicorn ${DJANGO_WSGI_MODULE}:application \
